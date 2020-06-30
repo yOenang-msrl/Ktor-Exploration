@@ -2,6 +2,7 @@ package com.example
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import freemarker.cache.ClassTemplateLoader
 import io.ktor.application.*
 import io.ktor.response.*
 import io.ktor.request.*
@@ -34,7 +35,9 @@ fun Application.module(testing: Boolean = false) {
     install(ContentNegotiation) {
         gson()
     }
-    install(FreeMarker)
+    install(FreeMarker) {
+        templateLoader = ClassTemplateLoader(this::class.java.classLoader, "templates")
+    }
 
     routing {
         this.root()
@@ -78,7 +81,7 @@ fun Application.module(testing: Boolean = false) {
 
         get("/test") {
             val user = Request("userId", "packagename", "productId", "token")
-            call.respond(FreeMarkerContent("hello.ftl", mapOf("user" to user)))
+            call.respond(FreeMarkerContent("test.ftl", mapOf("subscriptions" to user)))
         }
     }
 }
