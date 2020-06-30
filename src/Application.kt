@@ -1,5 +1,7 @@
 package com.example
 
+import com.google.gson.annotations.Expose
+import com.google.gson.annotations.SerializedName
 import io.ktor.application.*
 import io.ktor.response.*
 import io.ktor.request.*
@@ -7,6 +9,8 @@ import io.ktor.client.*
 import io.ktor.client.engine.apache.*
 import io.ktor.features.ContentNegotiation
 import io.ktor.features.StatusPages
+import io.ktor.freemarker.FreeMarker
+import io.ktor.freemarker.FreeMarkerContent
 import io.ktor.gson.gson
 import io.ktor.routing.*
 import io.ktor.http.*
@@ -30,6 +34,7 @@ fun Application.module(testing: Boolean = false) {
     install(ContentNegotiation) {
         gson()
     }
+    install(FreeMarker)
 
     routing {
         this.root()
@@ -66,12 +71,39 @@ fun Application.module(testing: Boolean = false) {
         this.users()
 
         post("/verify") {
-            call.respond(Response("ok"))
+            //call.respond(Response(status = "ok"))
+            val request = call.receive<Request>()
+            call.respond(request)
+        }
+
+        get("/test") {
+            val user = Request("userId", "packagename", "productId", "token")
+            call.respond(FreeMarkerContent("hello.ftl", mapOf("user" to user)))
         }
     }
 }
 
-data class Response(val status: String)
+//@JsonClass(generateAdapter = true)
+data class Request(
+    @Expose
+    @SerializedName("userId")
+    val userId: String,
+    @Expose
+    @SerializedName("packageName")
+    val packageName: String,
+    @Expose
+    @SerializedName("productId")
+    val productId: String,
+    @Expose
+    @SerializedName("token")
+    val token: String
+)
+
+data class Response(
+    @Expose
+    @SerializedName("status")
+    val status: String
+)
 
 fun FlowOrMetaDataContent.styleCss(builder: CSSBuilder.() -> Unit) {
     style(type = ContentType.Text.CSS.toString()) {
