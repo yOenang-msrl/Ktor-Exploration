@@ -1,0 +1,14 @@
+version: 2
+updates:
+- package-ecosystem: gradle
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: org.jetbrains:kotlin-css-jvm
+    versions:
+    - 1.0.0-pre.144-kotlin-1.4.21
+    - 1.0.0-pre.144-kotlin-1.4.30
+    - 1.0.0-pre.145-kotlin-1.4.30
+    - 1.0.0-pre.146-kotlin-1.4.30
